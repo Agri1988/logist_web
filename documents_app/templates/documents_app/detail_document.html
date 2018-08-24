@@ -1,0 +1,123 @@
+{% extends 'base_app/base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block body %}
+    <div id="app" class="container">
+        <div class="row">
+            <div class="offset-1 col-lg-10" >
+                <div class="table-responsive">
+                    <table class="table" border="1px">
+                        <thead>
+                            <tr>
+                                <th>Наименование и краткая характеристика услуги</th>
+                                <th>Ед.изм.</th>
+                                <th>Кол-во</th>
+                                <th>Цена,руб.</th>
+                                <th>Сумма без НДС, руб.</th>
+                                <th>Ставка НДС, %</th>
+                                <th>Сумма НДС, руб.</th>
+                                <th>Сумма с НДС, руб.</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr v-for="service, index in services">
+                                    <td><span id="name" type="text" @click="service_detail(index)">[[service.name]]</span></td>
+                                    <td><span id="unit" type="text" >[[service.unit]]</span></td>
+                                    <td><span id="count" type="number">[[service.count]]</span></td>
+                                    <td><span id="price" type="number" >[[service.price]]</span></td>
+                                    <td><span id="cost_wo_vat" type="number" >[[service.cost_wo_vat]]</span></td>
+                                    <td><span id="vat_rate" type="number" >[[service.vat_rate]]</span></td>
+                                    <td><span id="vat_value" type="number" >[[service.vat_value]]</span></td>
+                                    <td><span id="cost_w_vat" type="number" >[[service.cost_w_wat]]</span></td>
+                                </tr>
+                                <tr>
+                                    <td @click="add_line">add line</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <form id="detail_form" method="post" enctype="multipart/form-data" class=""
+                      {% if form.instance.id %}
+                        action="{{ form.instance.get_absolute_url }}"
+                      {% endif %}>
+                    {% csrf_token %}
+                    {{ form.as_p}}
+                    <p><button name="submit" type="submit" @click.prevent="save_document">Сохранить</button></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'base_app/js/django_form.js' %}"></script>
+    <script>
+        bootstrap_form('#detail_form')
+    </script>
+
+
+<script src="{% static 'base_app/js/vue.js' %}"></script>
+    <script src="{% static 'base_app/js/axios.js' %}"></script>
+
+{#{% csrf_token %}#}
+<script>
+    /**
+     * Config global for axios/django
+     */
+    axios.defaults.xsrfHeaderName = "X-CSRFToken"
+    axios.defaults.xsrfCookieName = 'csrftoken'
+
+    const CSRF = document.getElementsByName('csrfmiddlewaretoken')[0].value
+    console.log(CSRF, 'this is csrf')
+    new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#app',
+    data(){
+        return{
+            services:[
+                        {% for service in services %}
+                    {
+                        pk: '{{ service.pk }}',
+                        name:'{{service.name}}',
+                        unit:'{{ service.unit }}',
+                        count:'{{ service.count }}',
+                        price:'{{ service.price }}',
+                        cost_wo_vat:'{{ service.cost_wo_vat }}',
+                        vat_rate:'{{ service.vat }}',
+                        vat_value:'{{ service.vat_value }}',
+                        cost_w_wat:'{{ service.cost_with_vat }}',
+                        url:'{{ service.get_absolute_url }}'
+                    },
+            {% endfor %}
+            ]
+        }
+    },
+    methods:{
+        add_line :function () {
+            let data =
+                {   pk:'',
+                    name: '',
+                    unit: '',
+                    count: '',
+                    price: '',
+                    cost_wo_vat: '',
+                    vat_rate: '',
+                    vat_value: '',
+                    cost_w_wat: ''
+                };
+            this.$set(this.services, this.services.length, data)
+        },
+        save_document:function () {
+            console.log('CSRF: ', CSRF);
+            axios.post('http://127.0.0.1:8000/documents/save_document/', {services:this.services}, {headers:{'X-CSRFToken':CSRF }}).
+            then(response => console.log(response))
+        },
+        service_detail:function (index) {
+            console.log(this.services[index].url);
+            location.href = 'http://127.0.0.1:8000'+this.services[index].url+'?document={{ form.instance.pk }}'
+        }
+    }
+
+})
+</script>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+<link rel=stylesheet href=https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css integrity=sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB crossorigin=anonymous>
+    <title>Title</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                {% if form.errors %}
+                    <p>Веденные данные не верны</p>
+                {% endif %}
+                <form id="login_form" action="{% url 'base_app:login_' %}" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <p><button name="submit">Wejść</button></p>
+                    <input type="hidden" name="next" value="{% url 'base_app:index' %}">
+{#                    <div class="form-control">#}
+{#                        <label  itemid="login">Имя пользователя</label>#}
+{#                        <input class="form-control" id="login" type="text">#}
+{#                    </div>#}
+{#                    <div class="form-control">#}
+{#                        <label  itemid="pass">Пароль</label>#}
+{#                        <input class="form-control" id="pass" type="password">#}
+{#                    </div>#}
+{#                    <div class="form-control">#}
+{#                        <button class="form-control" id="accept" type="submit">Войти</button>#}
+{#                    </div>#}
+{#                    <input type="hidden" name="next" value="{% url 'base_app:index' %}">#}
+                </form>
+                    <script type="text/javascript" src="{% static 'base_app/js/django_form.js' %}"></script>
+                    <script type="text/javascript"> bootstrap_form('#login_form')</script>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src=https://code.jquery.com/jquery-3.3.1.slim.min.js integrity=sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo crossorigin=anonymous>
+</script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js integrity=sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49 crossorigin=anonymous>
+</script>
+<script src=https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js integrity=sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T crossorigin=anonymous>
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base_app/base.html' %}
+{% block body %}
+    <div class="container">
+        <a href="{% url 'documents_app:document_create' %}"> add new document</a>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in object_list %}
+                            <tr>
+                                <td scope="row">{{ forloop.counter }}</td>
+                                <td>{{ object.get_document_type_display }}</td>
+                                <td><a href="{{ object.get_absolute_url }}">{{ object.number }}</a></td>
+                                <td>{{ object.date }}</td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

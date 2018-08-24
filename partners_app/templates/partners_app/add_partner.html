@@ -1,0 +1,10 @@
+{% load staticfiles %}
+<div>
+    <form  id='partner_form' enctype="multipart/form-data" action="{% url 'partners_app:add_partner' %}" method="post">
+        {% csrf_token %}
+        {{ partner_form.as_p }}
+        <p><button name="submit">Сохранить</button></p>
+    </form>
+                <script type="text/javascript" src="{% static 'base_app/js/django_form.js' %}"></script>
+                <script type="text/javascript"> bootstrap_form('#partner_form')</script>
+</div>
